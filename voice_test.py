@@ -84,12 +84,12 @@ def return_command():
                 
                 
                     
-# while True:
+while True:
 
-#     command = return_command()
+    command = return_command()
     
-#     if command is not None:
-#         print("FINAL COMMAND: ", command)
-#         print()
-#     else:
-#         continue
+    if command is not None:
+        print("FINAL COMMAND: ", command)
+        print()
+    else:
+        continue
