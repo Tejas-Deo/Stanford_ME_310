@@ -1,5 +1,6 @@
 import logging
 import os
+import multiprocessing
 
 from flask import Flask
 from flask_ask import Ask, request, session, question, statement
@@ -20,68 +21,70 @@ moverightlist = ['move to the right', 'go right', 'move right']
 movestraightlist = ['go straight', 'move straight']
 comebacklist = ['come back', 'come to me']
 
-# @ask.launch
-# def launch():
-#     speech_text = 'Welcome to Raspberry Pi Automation.'
-#     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
+
+# # Create a shared value of type int
+# shared_value = multiprocessing.Value('i', 0)
+
+# # to create an event object
+# update_event = multiprocessing.Event()
+
+
+
+@ask.launch
+def launch():
+    speech_text = 'Welcome to Raspberry Pi Automation.'
+
+    return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
 
 @ask.intent('StartAutonomousSystemIntent', mapping = {'STARTCOMMAND': 'STARTCOMMAND'})
 def StartAutonomousSystemIntent(STARTCOMMAND):
-    if STARTCOMMAND in startcommandlist:
-        return statement(STARTCOMMAND)
+    #StoreValue = "0"
+
+    # Create a shared value of type int
+    shared_value = multiprocessing.Value('i', 0)
+
+    # to create an event object
+    update_event = multiprocessing.Event()
+
+    # Update the shared value
+    shared_value.value = 42
+
+    print("Shared value: ", shared_value.value)
+
+    # Set the event to signal that the value has been updated
+    update_event.set()
+    
+    return statement("Starting the autonomous system mode from the script!")
+    # if STARTCOMMAND in startcommandlist:
+    #     return statement(STARTCOMMAND)
 
 
 @ask.intent('StopAutonomousSystemIntent', mapping = {'STOPCOMMAND': 'STOPCOMMAND'})
 def StartAutonomousSystemIntent(STOPCOMMAND):
-    if STOPCOMMAND in stopcommandlist:
-        return statement(STOPCOMMAND)
+    StoreValue = "1"
+    
+    # update the shared value
+    shared_value.value = 1
+
+    # set the event to signal that the value has been updated
+    update_event.set()
+
+    return statement("Stopping the autonomous system mode from the script!!")
+
 
 
 @ask.intent('ChargingDockIntent', mapping = {'CHARGINGCOMMAND': 'CHARGINGCOMMAND'})
 def StartAutonomousSystemIntent(CHARGINGCOMMAND):
-    if CHARGINGCOMMAND in chargingdocklist:
-        return statement(CHARGINGCOMMAND)
 
+    # update the shared value
+    shared_value.value = 2
 
-@ask.intent('MoveLeftIntent', mapping = {'LEFTCOMMAND': 'LEFTCOMMAND'})
-def StartAutonomousSystemIntent(LEFTCOMMAND):
-    if LEFTCOMMAND in moveleftlist:
-        return statement(LEFTCOMMAND)
+    # set the event to signal that the value has been updated
+    update_event.set()
 
+    return statement("Going to the charging dock from the script!")
 
-@ask.intent('MoveRightIntent', mapping = {'RIGHTCOMMAND': 'RIGHTCOMMAND'})
-def StartAutonomousSystemIntent(RIGHTCOMMAND):
-    if RIGHTCOMMAND in moverightlist:
-        return statement(RIGHTCOMMAND)
-
-
-@ask.intent('GoStraightIntent', mapping = {'STRAIGHTCOMMAND': 'STRAIGHTCOMMAND'})
-def StartAutonomousSystemIntent(STRAIGHTCOMMAND):
-    if STRAIGHTCOMMAND in movestraightlist:
-        return statement(STRAIGHTCOMMAND)
-
-
-@ask.intent('ComeBackIntent', mapping = {'COMEBACKCOMMAND': 'COMEBACKCOMMAND'})
-def StartAutonomousSystemIntent(COMEBACKCOMMAND):
-    if COMEBACKCOMMAND in comebacklist:
-        return statement(COMEBACKCOMMAND)
-
-
-
-# @ask.intent('GpioIntent', mapping = {'status':'status'})
-# def Gpio_Intent(status,room):
-#     GPIO.setwarnings(False)
-#     GPIO.setmode(GPIO.BCM)    
-#     GPIO.setup(17,GPIO.OUT)
-#     if status in STATUSON:
-#         GPIO.output(17,GPIO.HIGH)
-#         return statement('turning {} lights'.format(status))
-#     elif status in STATUSOFF:
-#         GPIO.output(17,GPIO.LOW)
-#         return statement('turning {} lights'.format(status))
-#     else:
-#         return statement('Sorry not possible.')
 
 
 @ask.intent('AMAZON.HelpIntent')
@@ -90,14 +93,25 @@ def help():
     return question(speech_text).reprompt(speech_text).simple_card('HelloWorld', speech_text)
 
 
+@ask.default_intent
+def default_intent():
+    speech_text = "Sorry, I didn't understand what you said. Please try again."
+    return statement(speech_text).simple_card('Error', speech_text)
+
+
+
 @ask.session_ended
 def session_ended():
     return "{}", 200
 
 
+
+
+
 if __name__ == '__main__':
-    if 'ASK_VERIFY_REQUESTS' in os.environ:
-        verify = str(os.environ.get('ASK_VERIFY_REQUESTS', '')).lower()
-        if verify == 'false':
-            app.config['ASK_VERIFY_REQUESTS'] = False
+    # if 'ASK_VERIFY_REQUESTS' in os.environ:
+    #     verify = str(os.environ.get('ASK_VERIFY_REQUESTS', '')).lower()
+    #     print("Verify: ", verify)
+    #     if verify == 'false':
+    #         app.config['ASK_VERIFY_REQUESTS'] = False
     app.run(debug=True)

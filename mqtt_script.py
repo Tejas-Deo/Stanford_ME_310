@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import subprocess
 
 MQTT_ADDRESS = '192.168.10.14'
 MQTT_USER = 'avatar'
@@ -33,9 +34,17 @@ def on_message(client, userdata, msg):
     print("Message received from {} with Payload {}".format(msg.topic, msg.payload))
 
 
+
+
+
+
 def main():
     # to start the mqtt client
     mqtt_client = mqtt.Client()
+
+    process = subprocess.Popen(['python', 'alexa_rasp_code.py'], stdout=subprocess.PIPE)
+
+    print("Process value: ", process)    
 
     # to set the username and password
     mqtt_client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
@@ -46,6 +55,12 @@ def main():
     # to connect to the MQTT broker
     mqtt_client.connect(MQTT_ADDRESS, 1883)
     mqtt_client.loop_forever()
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
