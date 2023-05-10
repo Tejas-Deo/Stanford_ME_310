@@ -1,6 +1,11 @@
 import logging
-import os
+import os, time
 import multiprocessing
+import threading
+from threading import Thread, Lock
+#import paho.mqtt.client as mqtt
+
+from paho.mqtt import client as mqtt_client
 
 from flask import Flask
 from flask_ask import Ask, request, session, question, statement
@@ -22,11 +27,42 @@ movestraightlist = ['go straight', 'move straight']
 comebacklist = ['come back', 'come to me']
 
 
-# # Create a shared value of type int
-# shared_value = multiprocessing.Value('i', 0)
+# Define broker information
+broker_address = '192.168.10.132'
+broker_port = 1883
+broker_username = "avatar"
+broker_password = "avatar"
 
-# # to create an event object
-# update_event = multiprocessing.Event()
+client_id = "python-mqtt-test"
+
+
+def connect_mqtt():
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connected to MQTT Broker!")
+        else:
+            print("Failed to connect, return code %d\n", rc)
+
+    client = mqtt_client.Client(client_id)
+    client.username_pw_set(broker_username, broker_password)
+    client.on_connect = on_connect
+    client.connect(broker_address, broker_port)
+    return client
+
+
+
+def publish(client, topic, msg):
+
+    result = client.publish(topic, msg)
+    status = result[0]
+
+    if status == 0:
+        print("Published the message of {} topic".format(topic))
+    else:
+        print('Failed to publis the message to {} topic!!!!!'.format(topic))
+
+
+
 
 
 
@@ -37,53 +73,65 @@ def launch():
     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
 
+
+
+
 @ask.intent('StartAutonomousSystemIntent', mapping = {'STARTCOMMAND': 'STARTCOMMAND'})
 def StartAutonomousSystemIntent(STARTCOMMAND):
-    #StoreValue = "0"
 
-    # Create a shared value of type int
-    shared_value = multiprocessing.Value('i', 0)
+    message = "Start Auto system: "
 
-    # to create an event object
-    update_event = multiprocessing.Event()
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/Start"
+    publish(client, topic, message)
+    client.disconnect()
 
-    # Update the shared value
-    shared_value.value = 42
-
-    print("Shared value: ", shared_value.value)
-
-    # Set the event to signal that the value has been updated
-    update_event.set()
+    print("Start message published.....")
     
     return statement("Starting the autonomous system mode from the script!")
-    # if STARTCOMMAND in startcommandlist:
-    #     return statement(STARTCOMMAND)
+
+
 
 
 @ask.intent('StopAutonomousSystemIntent', mapping = {'STOPCOMMAND': 'STOPCOMMAND'})
-def StartAutonomousSystemIntent(STOPCOMMAND):
+def StopAutonomousSystemIntent(STOPCOMMAND):
     StoreValue = "1"
-    
-    # update the shared value
-    shared_value.value = 1
 
-    # set the event to signal that the value has been updated
-    update_event.set()
+    message = "Stop Auto system: "
+
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/Stop"
+    publish(client, topic, message)
+    client.disconnect()
+
+    #print("Stop Message published.....")
 
     return statement("Stopping the autonomous system mode from the script!!")
 
 
 
+
+
 @ask.intent('ChargingDockIntent', mapping = {'CHARGINGCOMMAND': 'CHARGINGCOMMAND'})
-def StartAutonomousSystemIntent(CHARGINGCOMMAND):
+def ChargingDockIntent(CHARGINGCOMMAND):
 
-    # update the shared value
-    shared_value.value = 2
+    message = "Go to the charging dock: "
 
-    # set the event to signal that the value has been updated
-    update_event.set()
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/ChargingDock"
+    publish(client, topic, message)
+    client.disconnect()
+
+    #print("Charging dock Message published....")
 
     return statement("Going to the charging dock from the script!")
+
+
+
+
 
 
 
@@ -103,6 +151,7 @@ def default_intent():
 @ask.session_ended
 def session_ended():
     return "{}", 200
+
 
 
 

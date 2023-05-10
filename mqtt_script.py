@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import subprocess
 
-MQTT_ADDRESS = '192.168.10.14'
+MQTT_ADDRESS = '192.168.10.132'
 MQTT_USER = 'avatar'
 MQTT_PASSWORD = 'avatar'
 MQTT_TOPIC_1 = 'ultrasonic_sensor/sensor_1'
