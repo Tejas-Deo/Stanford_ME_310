@@ -79,7 +79,7 @@ def subscribe(client: mqtt_client, topic):
 
 @ask.launch
 def launch():
-    speech_text = 'Welcome to Raspberry Pi Automation.'
+    speech_text = 'Welcome to Smart walker assistant from the script!'
 
     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
@@ -89,6 +89,7 @@ def launch():
 @ask.intent('StartAutonomousSystemIntent', mapping = {'STARTCOMMAND': 'STARTCOMMAND'})
 def StartAutonomousSystemIntent(STARTCOMMAND):
 
+    # to deifne the message to be sent to the MQTT Broker
     message = "Start Auto system: "
 
     client = connect_mqtt()
@@ -106,8 +107,8 @@ def StartAutonomousSystemIntent(STARTCOMMAND):
 
 @ask.intent('StopAutonomousSystemIntent', mapping = {'STOPCOMMAND': 'STOPCOMMAND'})
 def StopAutonomousSystemIntent(STOPCOMMAND):
-    StoreValue = "1"
-
+    
+    # to define the message to be sent to the MQTT Broker
     message = "Stop Auto system: "
 
     client = connect_mqtt()
@@ -120,11 +121,10 @@ def StopAutonomousSystemIntent(STOPCOMMAND):
 
 
 
-
-
 @ask.intent('ChargingDockIntent', mapping = {'CHARGINGCOMMAND': 'CHARGINGCOMMAND'})
 def ChargingDockIntent(CHARGINGCOMMAND):
 
+    # to define the message to be sent to the MQTT Broker
     message = "Go to the charging dock: "
 
     client = connect_mqtt()
@@ -139,15 +139,74 @@ def ChargingDockIntent(CHARGINGCOMMAND):
 
 
 
+@ask.intent('GoStraightIntent', mapping = {"STRAIGHTCOMMAND": "STRAIGHTCOMMAND"})
+def GoStraightIntent(STRAIGHTCOMMAND):
+     message = "Going Straight: "
+
+     client = connect_mqtt()
+     client.loop_start()
+     topic = "AutoSystem/GoStraight"
+     publish(client, topic, message)
+     client.disconnect()
+
+     return statement("Going straight from the script!")
 
 
-'''
-Add the remaining commands
-'''
+@ask.intent("GoLeftIntent", mapping = {"LEFTCOMMAND": "LEFTCOMMAND"})
+def GoLeftIntent(LEFTCOMMAND):
+    message = "Going Left: "
+
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/GoLeft"
+    publish(client, topic, message)
+
+    client.disconnect()
+
+    return statement("Going left from the script!")
+
+
+@ask.intent("GoRightIntent", mapping = {"RIGHTCOMMAND": "RIGHTCOMMAND"})
+def GoLeftIntent(RIGHTCOMMAND):
+    message = "Going Right: "
+
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/GoRight"
+    publish(client, topic, message)
+
+    client.disconnect()
+
+    return statement("Going right from the script!")
+
+
+@ask.intent("GoReverseIntent", mapping = {"REVERSECOMMAND": "REVERSECOMMAND"})
+def GoLeftIntent(REVERSECOMMAND):
+    message = "Going Reverse: "
+
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/GoReverse"
+    publish(client, topic, message)
+
+    client.disconnect()
+
+    return statement("Going reverse from the script!")
 
 
 
+@ask.intent("StopSystemIntent", mapping = {"STOPSYSTEM": "STOPSYSTEM"})
+def GoLeftIntent(REVERSECOMMAND):
+    message = "Stopping to move: "
 
+    client = connect_mqtt()
+    client.loop_start()
+    topic = "AutoSystem/StopMoving"
+    publish(client, topic, message)
+
+    client.disconnect()
+
+    return statement("Stopping to mowv now from the script!")
 
 
 
