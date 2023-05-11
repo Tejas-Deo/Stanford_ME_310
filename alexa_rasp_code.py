@@ -59,7 +59,7 @@ def publish(client, topic, msg):
     if status == 0:
         print("Published the message of {} topic".format(topic))
     else:
-        print('Failed to publis the message to {} topic!!!!!'.format(topic))
+        print('Failed to publish the message to {} topic!!!!!'.format(topic))
 
 
 
@@ -106,8 +106,6 @@ def StopAutonomousSystemIntent(STOPCOMMAND):
     publish(client, topic, message)
     client.disconnect()
 
-    #print("Stop Message published.....")
-
     return statement("Stopping the autonomous system mode from the script!!")
 
 
@@ -128,6 +126,14 @@ def ChargingDockIntent(CHARGINGCOMMAND):
     #print("Charging dock Message published....")
 
     return statement("Going to the charging dock from the script!")
+
+
+
+
+
+'''
+Add the remaining commands
+'''
 
 
 
