@@ -28,7 +28,7 @@ comebacklist = ['come back', 'come to me']
 
 
 # Define broker information
-broker_address = '192.168.10.132'
+broker_address = '192.168.10.9'
 broker_port = 1883
 broker_username = "avatar"
 broker_password = "avatar"
@@ -63,6 +63,17 @@ def publish(client, topic, msg):
 
 
 
+def subscribe(client: mqtt_client, topic):
+    print("Inside the subscribe function...")
+    def on_message(client, userdata, msg):
+        print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
+
+        return msg.payload.decode()
+
+    client.subscribe(topic)
+    client.on_message = on_message
+
+
 
 
 
@@ -71,7 +82,6 @@ def launch():
     speech_text = 'Welcome to Raspberry Pi Automation.'
 
     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
-
 
 
 
