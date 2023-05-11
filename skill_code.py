@@ -38,6 +38,133 @@ class LaunchRequestHandler(AbstractRequestHandler):
 
 
 
+class StartAutonomousSystemIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return ask_utils.is_intent_name("StartAutonomousSystemIntent")(handler_input)
+
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["STARTCOMMAND"].value
+        
+        speak_output = "Starting the autonomous system mode!"
+        
+        #if commandtype == "start the autonomous system mode" or commandtype == "turn on the autonomous system mode":
+            # type: (HandlerInput) -> Response
+            #speak_output = "Starting autonomous system mode!"
+        
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output).ask(speak_output)
+                # .ask("add a reprompt if you want to keep the session open for the user to respond")
+                .response
+        )
+
+
+
+class StopAutonomousSystemIntentHandler(AbstractRequestHandler):
+    """Handler for Hello World Intent."""
+    def can_handle(self, handler_input):
+        # type: (HandlerInput) -> bool
+        return ask_utils.is_intent_name("StopAutonomousSystemIntent")(handler_input)
+
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["STOPCOMMAND"].value
+        
+        speak_output = "Stopping the autonomous system mode!"
+        
+        #if commandtype == "start the autonomous system mode" or commandtype == "turn on the autonomous system mode":
+            # type: (HandlerInput) -> Response
+            #speak_output = "Starting autonomous system mode!"
+        
+
+        return (
+            handler_input.response_builder
+                .speak(speak_output).ask(speak_output)
+                # .ask("add a reprompt if you want to keep the session open for the user to respond")
+                .response
+        )
+
+
+class GoStraightIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("GoStraightIntent")(handler_input)
+    
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["STRAIGHTCOMMAND"].value
+        
+        speak_output = "Going Straight!"
+        
+        return (
+            handler_input.response_builder
+            .speak(speak_output).ask(speak_output)
+            .response)
+
+
+class GoLeftIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("GoLeftIntent")(handler_input)
+    
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["LEFTCOMMAND"].value
+        
+        speak_output = "Going Left!"
+        
+        return (handler_input.response_builder
+        .speak(speak_output).ask(speak_output)
+        .response)
+
+
+class GoRightIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("GoRightIntent")(handler_input)
+        
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["RIGHTCOMMAND"].value
+        
+        speak_output = "Going Right!"
+        
+        return (handler_input.response_builder
+        .speak(speak_output).ask(speak_output)
+        .response)
+
+
+class GoReverseIntent(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("GoReverseIntent")(handler_input)
+    
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["REVERSECOMMAND"].value
+        
+        speak_output = "Going Reverse!"
+        
+        return (handler_input.response_builder
+        .speak(speak_output).ask(speak_output)
+        .response)
+
+
+class StopSystemIntentHandler(AbstractRequestHandler):
+    def can_handle(self, handler_input):
+        return ask_utils.is_intent_name("StopSystemIntent")(handler_input)
+    
+    def handle(self, handler_input):
+        slots = handler_input.request_envelope.request.intent.slots
+        commandtype = slots["STOPSYSTEM"].value
+        
+        speak_output = "Stopping now!"
+        
+        return (handler_input.response_builder
+        .speak(speak_output).ask(speak_output)
+        .response)
+
+
 class HelloWorldIntentHandler(AbstractRequestHandler):
     """Handler for Hello World Intent."""
     def can_handle(self, handler_input):
@@ -91,165 +218,6 @@ class CancelOrStopIntentHandler(AbstractRequestHandler):
                 .response
         )
 
-
-class StartAutonomousSystemIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("StartAutonomousSystemIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["STARTCOMMAND"].value
-        
-        if commandtype == "start the autonomous system mode" or commandtype == "turn on the autonomous system mode":
-            # type: (HandlerInput) -> Response
-            speak_output = "Starting autonomous system mode!"
-        
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-class StopAutonomousSystemIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("StopAutonomousSystemIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["STOPCOMMAND"].value
-        
-        if commandtype == "stop the autonomous system mode" or commandtype == "turn off the autonomous system mode":
-            # type: (HandlerInput) -> Response
-            speak_output = "Stopping autonomous system mode!"
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-
-class ChargingDockIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("ChargingDockIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["CHARGINGCOMMAND"].value
-        
-        if commandtype == "go to the charging dock" or commandtype == "go to the charging station":
-            # type: (HandlerInput) -> Response
-            speak_output = "Going to the charging dock!"
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-
-class MoveLeftIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("MoveLeftIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["LEFTCOMMAND"].value
-        
-        if commandtype == "move to the left" or commandtype == "move left" or commandtype == "go left":
-            # type: (HandlerInput) -> Response
-            speak_output = "Moving Left!"
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-
-class MoveRightIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("MoveRightIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["RIGHTCOMMAND"].value
-        
-        if commandtype == "move to the right" or commandtype == "move right" or commandtype == "go right":
-            # type: (HandlerInput) -> Response
-            speak_output = "Moving Right!"
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-
-class GoStraightIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("GoStraightIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["STRAIGHTCOMMAND"].value
-        
-        if commandtype == "go straight" or commandtype == "move straight":
-            # type: (HandlerInput) -> Response
-            speak_output = "Moving Straight!"
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
-
-
-
-class ComeBackIntentHandler(AbstractRequestHandler):
-    """Handler for Hello World Intent."""
-    def can_handle(self, handler_input):
-        # type: (HandlerInput) -> bool
-        return ask_utils.is_intent_name("ComeBackIntent")(handler_input)
-
-    def handle(self, handler_input):
-        slots = handler_input.request_envelope.request.intent.slots
-        commandtype = slots["COMEBACKCOMMAND"].value
-        
-        if commandtype == "come back" or commandtype == "come to me":
-            # type: (HandlerInput) -> Response
-            speak_output = "Coming back!"
-
-        return (
-            handler_input.response_builder
-                .speak(speak_output).ask(speak_output)
-                # .ask("add a reprompt if you want to keep the session open for the user to respond")
-                .response
-        )
 
 
 
@@ -338,19 +306,17 @@ sb = SkillBuilder()
 sb.add_request_handler(LaunchRequestHandler())
 sb.add_request_handler(HelloWorldIntentHandler())
 sb.add_request_handler(HelpIntentHandler())
-
-
-
-sb.add_request_handler(StopAutonomousSystemIntentHandler())
-sb.add_request_handler(StartAutonomousSystemIntentHandler())
-sb.add_request_handler(ChargingDockIntentHandler())
-sb.add_request_handler(MoveRightIntentHandler())
-sb.add_request_handler(MoveLeftIntentHandler())
-sb.add_request_handler(GoStraightIntentHandler())
-sb.add_request_handler(ComeBackIntentHandler())
-
-
 sb.add_request_handler(CancelOrStopIntentHandler())
+
+sb.add_request_handler(StartAutonomousSystemIntentHandler())
+sb.add_request_handler(StopAutonomousSystemIntentHandler())
+sb.add_request_handler(GoStraightIntentHandler())
+sb.add_request_handler(GoLeftIntentHandler())
+sb.add_request_handler(GoRightIntentHandler())
+sb.add_request_handler(GoReverseIntent())
+sb.add_request_handler(StopSystemIntentHandler())
+
+
 sb.add_request_handler(FallbackIntentHandler())
 sb.add_request_handler(SessionEndedRequestHandler())
 sb.add_request_handler(IntentReflectorHandler()) # make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
