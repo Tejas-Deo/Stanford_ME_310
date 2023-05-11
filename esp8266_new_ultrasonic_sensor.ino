@@ -11,7 +11,7 @@ const char* wifi_password = "ME310Printer";   // the password of my network
 
 
 //MQTT
-const char* mqtt_server = "192.168.10.14";
+const char* mqtt_server = "192.168.10.9";
 const char* ultrasonic_sensor_1_topic = "ultrasonic_sensor/sensor_1";
 const char* ultrasonic_sensor_2_topic = "ultrasonic_sensor/sensor_2";
 const char* mqtt_username = "avatar"; 
@@ -58,10 +58,10 @@ void connect_MQTT(){
 
 
 // TO define the GPIOs for the ultrasonics sensor 1
-const int trigPin_sensor_1 = D0;
-const int echoPin_sensor_1 = D1;
-const int trigPin_sensor_2 = D8;
-const int echoPin_sensor_2 = D7;
+#define triggerPin_sensor_1 12   // D6
+#define echoPin_sensor_1 14      // D5
+#define triggerPin_sensor_2 4   // D2
+#define echoPin_sensor_2 5   // D1
 
 
 //define sound velocity in cm/uS
@@ -69,82 +69,84 @@ const int echoPin_sensor_2 = D7;
 #define CM_TO_INCH 0.393701
 
 
-long duration_1, duration_2;
-float distanceCm_1, distanceCm_2;
-//float distanceInch_1, distanceInch_2;
+/* two variables to store duraion and distance value */
+long duration_sensor_1;
+int distance_sensor_1;
+long duration_sensor_2;
+int distance_sensor_2;
 
 
+
+// TO setup all the sensors
 void setup() {
   Serial.begin(115200); // Starts the serial communication
   Serial.println("In the void setup block");
   connect_MQTT();   // connect to the MQTT broker
   Serial.setTimeout(2000);
   
-  pinMode(trigPin_sensor_1, OUTPUT); // Sets the trigPin as an Output
+  pinMode(triggerPin_sensor_1, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin_sensor_1, INPUT); // Sets the echoPin as an Input
 
-  pinMode(trigPin_sensor_2, OUTPUT); // Sets the trigPin as an Output
+  pinMode(triggerPin_sensor_2, OUTPUT); // Sets the trigPin as an Output
   pinMode(echoPin_sensor_2, INPUT); // Sets the echoPin as an Input
   
 }
 
 
+
 void loop() {
 
-  // For ultrasonic SENSOR 1
-  // Clears the trigPin
-  digitalWrite(trigPin_sensor_1, LOW);
+  // FOR ULTRASONIC SENSOR 1
+  digitalWrite(triggerPin_sensor_1, LOW); //set trigger signal low for 2us
   delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin_sensor_1, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin_sensor_1, LOW);
   
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration_1 = pulseIn(echoPin_sensor_1, HIGH);
-
-  Serial.print("Duration: ");
-  Serial.println(duration_1);
+  /*send 10 microsecond pulse to trigger pin of HC-SR04 */
+  digitalWrite(triggerPin_sensor_1, HIGH);  // make trigger pin active high
+  delayMicroseconds(10);            // wait for 10 microseconds
+  digitalWrite(triggerPin_sensor_1, LOW);   // make trigger pin active low
   
-  // Calculate the distance
-  distanceCm_1 = duration_1 * SOUND_VELOCITY/2.0;
+  /*Measure the Echo output signal duration or pulss width */
+  duration_sensor_1 = pulseIn(echoPin_sensor_1, HIGH); // save time duration value in "duration variable
+  distance_sensor_1= duration_sensor_1*0.034/2; //Convert pulse duration into distance
+
+  Serial.print("Distance from ultrasonic sensor 1 is: ");
+  Serial.println(distance_sensor_1);
 
 
   
-  // For ultrasonic SENSOR 2
-  // Clears the trigPin
-  digitalWrite(trigPin_sensor_2, LOW);
+  
+  // FOR ULTRASONIC SENSOR 2
+  digitalWrite(triggerPin_sensor_2, LOW); //set trigger signal low for 2us
   delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
-  digitalWrite(trigPin_sensor_2, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin_sensor_2, LOW);
   
-  // Reads the echoPin, returns the sound wave travel time in microseconds
-  duration_2 = pulseIn(echoPin_sensor_2, HIGH);
+  /*send 10 microsecond pulse to trigger pin of HC-SR04 */
+  digitalWrite(triggerPin_sensor_2, HIGH);  // make trigger pin active high
+  delayMicroseconds(10);            // wait for 10 microseconds
+  digitalWrite(triggerPin_sensor_2, LOW);   // make trigger pin active low
+  
+  /*Measure the Echo output signal duration or pulss width */
+  duration_sensor_2 = pulseIn(echoPin_sensor_2, HIGH); // save time duration value in "duration variable
+  distance_sensor_2 = duration_sensor_2*0.034/2; //Convert pulse duration into distance
 
-  Serial.print("Duration: ");
-  Serial.println(duration_2);
-  
-  // Calculate the distance
-  distanceCm_2 = duration_2 * SOUND_VELOCITY/2.0;
+  Serial.print("Distance from ultrasonic sensor 2 is: ");
+  Serial.println(distance_sensor_2);
+
   
   
-  
-  // Prints the distance on the Serial Monitor
-  Serial.print("Distance (cm) from Sensor 1 and 2 are: ");
-  Serial.println(distanceCm_1, distanceCm_2);
+//  // Prints the distance on the Serial Monitor
+//  Serial.print("Distance (cm) from Sensor 1 and 2 are: ");
+//  Serial.println(distance_sensor_1, distance_sensor_2);
 
   delay(500);
 
 
-  // MQTT can only transmit strings
-  String distanceCmS_1="Sensor_1: "+String((float)distanceCm_1)+"cm";
-  String distanceCmS_2="Sensor_2: "+String((float)distanceCm_2)+"cm";
+//  // MQTT can only transmit strings
+//  String distanceCmS_1="Sensor_1: "+String((float)distanceCm_1)+"cm";
+//  String distanceCmS_2="Sensor_2: "+String((float)distanceCm_2)+"cm";
 
 
   //Publish info from SENSOR 1 to the MQTT Broker
-  if (client.publish(ultrasonic_sensor_1_topic, String(distanceCm_1).c_str())){
+  if (client.publish(ultrasonic_sensor_1_topic, String(distance_sensor_1).c_str())){
     Serial.println("Distance from SENSOR 1 sent!");
   }
   
@@ -154,13 +156,13 @@ void loop() {
     Serial.println("Failed to send the distance to the broker. Reconnecting to the MQTT broker and tryinng again!");
     client.connect(clientID, mqtt_username, mqtt_password);
     delay(10); // to make sure that the client.publish() does not clash with the client.connect() call
-    client.publish(ultrasonic_sensor_1_topic, String(distanceCm_1).c_str());
+    client.publish(ultrasonic_sensor_1_topic, String(distance_sensor_1).c_str());
   }
 
 
 
   //Publish info from SENSOR 2 to the MQTT Broker
-  if (client.publish(ultrasonic_sensor_2_topic, String(distanceCm_2).c_str())){
+  if (client.publish(ultrasonic_sensor_2_topic, String(distance_sensor_2).c_str())){
     Serial.println("Distance from SENSOR 2 sent!");
   }
   
@@ -170,7 +172,7 @@ void loop() {
     Serial.println("Failed to send the distance to the broker. Reconnecting to the MQTT broker and tryinng again!");
     client.connect(clientID, mqtt_username, mqtt_password);
     delay(10); // to make sure that the client.publish() does not clash with the client.connect() call
-    client.publish(ultrasonic_sensor_2_topic, String(distanceCm_2).c_str());
+    client.publish(ultrasonic_sensor_2_topic, String(distance_sensor_2).c_str());
   }
 
 
