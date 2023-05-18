@@ -28,7 +28,7 @@ comebacklist = ['come back', 'come to me']
 
 
 # Define broker information
-broker_address = '192.168.10.9'
+broker_address = '192.168.30.2'
 broker_port = 1883
 broker_username = "avatar"
 broker_password = "avatar"
@@ -89,18 +89,28 @@ def launch():
 @ask.intent('StartAutonomousSystemIntent', mapping = {'STARTCOMMAND': 'STARTCOMMAND'})
 def StartAutonomousSystemIntent(STARTCOMMAND):
 
+    statement("Starting the autonomous system mode from the script!")
+
     # to deifne the message to be sent to the MQTT Broker
-    message = "Start Auto system: "
+    message = "StartAuto"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/Start"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
+
+    while True:
+        microcontroller_response = subscribe(client, topic)
+
+        if microcontroller_response is not None:
+            statement (microcontroller_response)
+            break
+
     client.disconnect()
 
     print("Start message published.....")
     
-    return statement("Starting the autonomous system mode from the script!")
+    return None
 
 
 
@@ -108,16 +118,26 @@ def StartAutonomousSystemIntent(STARTCOMMAND):
 @ask.intent('StopAutonomousSystemIntent', mapping = {'STOPCOMMAND': 'STOPCOMMAND'})
 def StopAutonomousSystemIntent(STOPCOMMAND):
     
+    statement("Stopping the autonomous system mode from the script!!")
+    
     # to define the message to be sent to the MQTT Broker
-    message = "Stop Auto system: "
+    message = "StopAuto"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/Stop"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
+
+    while True:
+        microcontroller_response = subscribe(client. topic)
+
+        if microcontroller_response is not None:
+            statement (microcontroller_response)
+            break
+
     client.disconnect()
 
-    return statement("Stopping the autonomous system mode from the script!!")
+    return None
 
 
 
@@ -129,11 +149,11 @@ def ChargingDockIntent(CHARGINGCOMMAND):
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/ChargingDock"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
     client.disconnect()
 
-    #print("Charging dock Message published....")
+    print("Charging dock Message published....")
 
     return statement("Going to the charging dock from the script!")
 
@@ -141,11 +161,11 @@ def ChargingDockIntent(CHARGINGCOMMAND):
 
 @ask.intent('GoStraightIntent', mapping = {"STRAIGHTCOMMAND": "STRAIGHTCOMMAND"})
 def GoStraightIntent(STRAIGHTCOMMAND):
-     message = "Going Straight: "
+     message = "GoStraight"
 
      client = connect_mqtt()
      client.loop_start()
-     topic = "AutoSystem/GoStraight"
+     topic = "MQTTCommand/Voice"
      publish(client, topic, message)
      client.disconnect()
 
@@ -154,11 +174,11 @@ def GoStraightIntent(STRAIGHTCOMMAND):
 
 @ask.intent("GoLeftIntent", mapping = {"LEFTCOMMAND": "LEFTCOMMAND"})
 def GoLeftIntent(LEFTCOMMAND):
-    message = "Going Left: "
+    message = "GoLeft"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/GoLeft"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
 
     client.disconnect()
@@ -168,11 +188,11 @@ def GoLeftIntent(LEFTCOMMAND):
 
 @ask.intent("GoRightIntent", mapping = {"RIGHTCOMMAND": "RIGHTCOMMAND"})
 def GoLeftIntent(RIGHTCOMMAND):
-    message = "Going Right: "
+    message = "GoLeft"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/GoRight"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
 
     client.disconnect()
@@ -182,11 +202,11 @@ def GoLeftIntent(RIGHTCOMMAND):
 
 @ask.intent("GoReverseIntent", mapping = {"REVERSECOMMAND": "REVERSECOMMAND"})
 def GoLeftIntent(REVERSECOMMAND):
-    message = "Going Reverse: "
+    message = "GoReverse"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/GoReverse"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
 
     client.disconnect()
@@ -201,8 +221,10 @@ def GoLeftIntent(REVERSECOMMAND):
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "AutoSystem/StopMoving"
+    topic = "MQTTCommand/Voice"
     publish(client, topic, message)
+
+    subscribe()
 
     client.disconnect()
 
