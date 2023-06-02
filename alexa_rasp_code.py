@@ -1,5 +1,5 @@
 import logging
-import os, time
+import os, time, sys
 import multiprocessing
 import threading
 from threading import Thread, Lock
@@ -36,6 +36,7 @@ broker_password = "avatar"
 client_id = "python-mqtt-test"
 
 
+
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -64,10 +65,10 @@ def publish(client, topic, msg):
 
 
 def subscribe(client: mqtt_client, topic):
-    print("Inside the subscribe function...")
+    
     def on_message(client, userdata, msg):
+        #print("inside on_message function")
         print(f"Received `{msg.payload.decode()}` from `{msg.topic}` topic")
-
         return msg.payload.decode()
 
     client.subscribe(topic)
@@ -75,42 +76,28 @@ def subscribe(client: mqtt_client, topic):
 
 
 
-
-
 @ask.launch
 def launch():
     speech_text = 'Welcome to Smart walker assistant from the script!'
-
     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
-
 
 
 
 @ask.intent('StartAutonomousSystemIntent', mapping = {'STARTCOMMAND': 'STARTCOMMAND'})
 def StartAutonomousSystemIntent(STARTCOMMAND):
 
-    statement("Starting the autonomous system mode from the script!")
-
     # to deifne the message to be sent to the MQTT Broker
-    message = "StartAuto"
+    message = "startA"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+
+    topic = "V"
     publish(client, topic, message)
 
-    while True:
-        microcontroller_response = subscribe(client, topic)
-
-        if microcontroller_response is not None:
-            statement (microcontroller_response)
-            break
-
     client.disconnect()
-
     print("Start message published.....")
-    
-    return None
+    return statement("Starting the autonomous system mode from the script!")
 
 
 
@@ -121,22 +108,14 @@ def StopAutonomousSystemIntent(STOPCOMMAND):
     statement("Stopping the autonomous system mode from the script!!")
     
     # to define the message to be sent to the MQTT Broker
-    message = "StopAuto"
+    message = "stopA"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+    topic = "V"
     publish(client, topic, message)
 
-    while True:
-        microcontroller_response = subscribe(client. topic)
-
-        if microcontroller_response is not None:
-            statement (microcontroller_response)
-            break
-
     client.disconnect()
-
     return None
 
 
@@ -145,89 +124,82 @@ def StopAutonomousSystemIntent(STOPCOMMAND):
 def ChargingDockIntent(CHARGINGCOMMAND):
 
     # to define the message to be sent to the MQTT Broker
-    message = "Go to the charging dock: "
+    message = "CD"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+    topic = "V"
     publish(client, topic, message)
     client.disconnect()
 
     print("Charging dock Message published....")
-
     return statement("Going to the charging dock from the script!")
 
 
 
 @ask.intent('GoStraightIntent', mapping = {"STRAIGHTCOMMAND": "STRAIGHTCOMMAND"})
 def GoStraightIntent(STRAIGHTCOMMAND):
-     message = "GoStraight"
+     message = "straight"
 
      client = connect_mqtt()
      client.loop_start()
-     topic = "MQTTCommand/Voice"
+     topic = "V"
      publish(client, topic, message)
-     client.disconnect()
 
+     client.disconnect()
      return statement("Going straight from the script!")
 
 
 @ask.intent("GoLeftIntent", mapping = {"LEFTCOMMAND": "LEFTCOMMAND"})
 def GoLeftIntent(LEFTCOMMAND):
-    message = "GoLeft"
+    message = "left"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+    topic = "V"
     publish(client, topic, message)
 
     client.disconnect()
-
     return statement("Going left from the script!")
 
 
 @ask.intent("GoRightIntent", mapping = {"RIGHTCOMMAND": "RIGHTCOMMAND"})
 def GoLeftIntent(RIGHTCOMMAND):
-    message = "GoLeft"
+    message = "right"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+    topic = "V"
     publish(client, topic, message)
 
     client.disconnect()
-
     return statement("Going right from the script!")
 
 
 @ask.intent("GoReverseIntent", mapping = {"REVERSECOMMAND": "REVERSECOMMAND"})
 def GoLeftIntent(REVERSECOMMAND):
-    message = "GoReverse"
+    message = "reverse"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+    topic = "V"
     publish(client, topic, message)
 
     client.disconnect()
-
     return statement("Going reverse from the script!")
 
 
 
 @ask.intent("StopSystemIntent", mapping = {"STOPSYSTEM": "STOPSYSTEM"})
 def GoLeftIntent(REVERSECOMMAND):
-    message = "Stopping to move: "
+    message = "SM"
 
     client = connect_mqtt()
     client.loop_start()
-    topic = "MQTTCommand/Voice"
+    topic = "V"
     publish(client, topic, message)
 
-    subscribe()
-
     client.disconnect()
-
     return statement("Stopping to mowv now from the script!")
 
 
@@ -260,4 +232,5 @@ if __name__ == '__main__':
     #     print("Verify: ", verify)
     #     if verify == 'false':
     #         app.config['ASK_VERIFY_REQUESTS'] = False
+    
     app.run(debug=True)
