@@ -28,7 +28,7 @@ comebacklist = ['come back', 'come to me']
 
 
 # Define broker information
-broker_address = '192.168.30.2'
+broker_address = '192.168.30.3'
 broker_port = 1883
 broker_username = "avatar"
 broker_password = "avatar"
@@ -78,7 +78,7 @@ def subscribe(client: mqtt_client, topic):
 
 @ask.launch
 def launch():
-    speech_text = 'Welcome to Smart walker assistant from the script!'
+    speech_text = 'Welcome to walker system from your commands!!'
     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
 
 
@@ -97,7 +97,7 @@ def StartAutonomousSystemIntent(STARTCOMMAND):
 
     client.disconnect()
     print("Start message published.....")
-    return statement("Starting the autonomous system mode from the script!")
+    return statement("Starting the autonomous system mode from your commands!")
 
 
 
@@ -105,7 +105,7 @@ def StartAutonomousSystemIntent(STARTCOMMAND):
 @ask.intent('StopAutonomousSystemIntent', mapping = {'STOPCOMMAND': 'STOPCOMMAND'})
 def StopAutonomousSystemIntent(STOPCOMMAND):
     
-    statement("Stopping the autonomous system mode from the script!!")
+    statement("Stopping the autonomous system mode from your commands!")
     
     # to define the message to be sent to the MQTT Broker
     message = "stopA"
@@ -133,7 +133,7 @@ def ChargingDockIntent(CHARGINGCOMMAND):
     client.disconnect()
 
     print("Charging dock Message published....")
-    return statement("Going to the charging dock from the script!")
+    return statement("Going to the charging dock from your commands!")
 
 
 
@@ -147,7 +147,7 @@ def GoStraightIntent(STRAIGHTCOMMAND):
      publish(client, topic, message)
 
      client.disconnect()
-     return statement("Going straight from the script!")
+     return statement("Going straight from your commands!")
 
 
 @ask.intent("GoLeftIntent", mapping = {"LEFTCOMMAND": "LEFTCOMMAND"})
@@ -160,7 +160,7 @@ def GoLeftIntent(LEFTCOMMAND):
     publish(client, topic, message)
 
     client.disconnect()
-    return statement("Going left from the script!")
+    return statement("Going left from your commands!")
 
 
 @ask.intent("GoRightIntent", mapping = {"RIGHTCOMMAND": "RIGHTCOMMAND"})
@@ -173,7 +173,7 @@ def GoLeftIntent(RIGHTCOMMAND):
     publish(client, topic, message)
 
     client.disconnect()
-    return statement("Going right from the script!")
+    return statement("Going right from your commands!")
 
 
 @ask.intent("GoReverseIntent", mapping = {"REVERSECOMMAND": "REVERSECOMMAND"})
@@ -186,7 +186,7 @@ def GoLeftIntent(REVERSECOMMAND):
     publish(client, topic, message)
 
     client.disconnect()
-    return statement("Going reverse from the script!")
+    return statement("Going reverse from your commands!")
 
 
 
@@ -200,7 +200,7 @@ def GoLeftIntent(REVERSECOMMAND):
     publish(client, topic, message)
 
     client.disconnect()
-    return statement("Stopping to mowv now from the script!")
+    return statement("Stopping to mowv now from your commands!")
 
 
 

@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 
 
-broker_address = '192.168.30.2'
+broker_address = '192.168.30.3'
 broker_port_receive = 9001
 broker_port_to_esp = 1883
 receive_topic = "UI_receive"   # to receive movement commands from the UI

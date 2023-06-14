@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import websocket
 
-mqtt_broker_address = "192.168.30.2"
+mqtt_broker_address = "192.168.30.8"
 receive_topic = "UI_receive"
 send_topic = "UI"
 

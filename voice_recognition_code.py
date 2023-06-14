@@ -1,90 +1,95 @@
-import RPi.GPIO as GPIO
-import time
-import serial
 import speech_recognition as sr
-import webbrowser as wb
-#from fuzzywuzzy import fuzz
-
-
-
-
 import time, os, sys, contextlib
-
-@contextlib.contextmanager
-def ignoreStderr():
-    devnull = os.open(os.devnull, os.O_WRONLY)
-    old_stderr = os.dup(2)
-    sys.stderr.flush()
-    os.dup2(devnull, 2)
-    os.close(devnull)
-    try:
-        yield
-    finally:
-        os.dup2(old_stderr, 2)
-        os.close(old_stderr)
+from fuzzywuzzy import fuzz
 
 
+def return_command():
 
-with ignoreStderr():
-    '''
-    Just writing a code block for speech recognition
-    '''
-    try:
-        # Define the list of valid commands
+    @contextlib.contextmanager
+    def ignoreStderr():
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        old_stderr = os.dup(2)
+        sys.stderr.flush()
+        os.dup2(devnull, 2)
+        os.close(devnull)
+        try:
+            yield
+        finally:
+            os.dup2(old_stderr, 2)
+            os.close(old_stderr)
+
+
+    with ignoreStderr():
+
+        listening = True
         valid_commands = ["Hey Walker Go away", "Hey walker go to the charging dock", "Hey walker Come back", 
-                        "Hey walker Start the autonomous system mode"]
-
+        "Hey walker Start the autonomous system mode"]
+        
         # Define the minimum confidence threshold for a valid command match
         min_confidence = 70
-        print("Please speak: ")
-        r = sr.Recognizer()
-        mic = sr.Microphone()
+        print("inside the init function.....")
 
 
-        while True:
-            with mic as source:
-                # listen for 5 seconds and create the ambient noise energy level
-                #r.adjust_for_ambient_noise(source, duration=5)
-                audio = r.listen(source)
+        while listening:
+            print("Inside while loop....")
+            with sr.Microphone() as source:
+                recognizer = sr.Recognizer()
+                recognizer.adjust_for_ambient_noise(source)
+                recognizer.dynamic_energy_threshold = 3000
 
-            
-            words = r.recognize_google(audio, language = 'en-IN', show_all = True)
-            print(words)
-            # if words is not None:
-            #     output = words[0]
-            #     transcript = output["transcript"]
-            #     print(transcript)
-            #     print()
-            # else:
-            #     continue
+                try:
+                    print("Listening...")
+                    audio = recognizer.listen(source)
+                    response = recognizer.recognize_google(audio)
+                    print("WORD SPOKEN: ", response)
 
-            if words['alternative'] is not None:
-                first_transcript = words['alternative'][0]['transcript']
-                print("First transcript: ", first_transcript)
 
-            # '''
-            # To match the recognized commands to a list of valid commands
-            # '''
-            # best_match = None
-            # best_match_confidence = 0
+                    '''
+                    To match the recognized commands to a list of valid commands
+                    '''
+                    best_match = None
+                    best_match_confidence = 0
 
-            # for command in valid_commands:
-            #     confidence = fuzz.ratio(words.lower(), command.lower())
-            #     if confidence > best_match_confidence:
-            #         best_match = command
-            #         best_match_confidence = confidence
-            
-            # # to exdcute the command if the confidence level is above a certain threshold
-            # if best_match_confidence >= min_confidence:
-            #     if words == "Go away":
-            #         print(words)
-            #     if words == "Park":
-            #         print(words)
-           
-            #     if words == "Come back":
-            #         print(words)
-            #     if words == "Start autonomous system mode":
-            #         print(words)
+                    for command in valid_commands:
+                        confidence = fuzz.ratio(response.lower(), command.lower())
+                        print("Confidence for command {} is {}".format(command, confidence))
+                        if confidence > best_match_confidence:
+                            best_match = command
+                            best_match_confidence = confidence
+                            print('BEST MATCH CONFIDENCE: ', best_match_confidence)
+                    
+                    # to exdcute the command if the confidence level is above a certain threshold
+                    if best_match_confidence >= min_confidence:
+                        if best_match == "Go away":
+                            print("Best Match", best_match)
+                        if best_match == "Park":
+                            print("Best Match", best_match)
+                
+                        if best_match == "Come back":
+                            print("Best Match", best_match)
+                        if best_match == "Start autonomous system mode":
+                            print("Best Match", best_match)
+                    
+                    else:
+                        best_match = "Did not recognize that, can you please repeat?"
+                    
+
+                except sr.UnknownValueError:
+                    #recognizer = sr.Recognizer()
+                    #recognizer.dynamic_energy_threshold = 3000  # Increase the energy threshold in case of an exception
+                    best_match = "Did not recognize that, can you please repeat?"
+
+
+                return best_match
+                
+                
+                    
+while True:
+
+    command = return_command()
     
-    except Exception as e:
-        pass
+    if command is not None:
+        print("FINAL COMMAND: ", command)
+        print()
+    else:
+        continue
